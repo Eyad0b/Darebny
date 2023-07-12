@@ -1,10 +1,14 @@
 // import 'package:curved_navigation_bar/curved_navigation_bar.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:darebny/const_values.dart';
+import 'package:darebny/screens/listing_page.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:badges/badges.dart' as badges;
 import '../../Components/curved_button_bar.dart';
 import '../drawer/drawer_screen.dart';
 import '../home/components/body.dart';
+import '../search_page.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -18,6 +22,12 @@ late double width;
 late double height;
 
 int _page = 0;
+List<Widget> _pages = [
+  Body(),
+  ListingPage(),
+  Body(),
+  Body(),
+];
 // GlobalKey<CurvedNavigationBarState> _bottomNavigationKey = GlobalKey();
 
 class _HomeScreenState extends State<HomeScreen> {
@@ -28,6 +38,7 @@ class _HomeScreenState extends State<HomeScreen> {
   double xOffset = 0;
   double yOffset = 0;
   bool isDrawerOpen = false;
+
 
   @override
   Widget build(BuildContext context) {
@@ -68,7 +79,7 @@ class _HomeScreenState extends State<HomeScreen> {
               preferredSize: Size.fromHeight(height * .08),
               child: _buildAppBar(),
             ),
-            body: const Body(),
+            body: _pages[_page],
             bottomNavigationBar: _buildBottomNavigationBar(),
           ),
         ),
@@ -129,10 +140,18 @@ class _HomeScreenState extends State<HomeScreen> {
             shape: BoxShape.circle,
           ),
           alignment: Alignment.center,
-          child: Icon(
-            Icons.search_rounded,
-            size: height * .035,
-            color: ConsValues.THEME_5,
+          child: InkWell(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const SearchPage()),
+              );
+            },
+            child: Icon(
+              Icons.search_rounded,
+              size: height * .035,
+              color: ConsValues.THEME_5,
+            ),
           ),
         ),
         Container(
@@ -274,4 +293,7 @@ class _HomeScreenState extends State<HomeScreen> {
       },
     );
   }
+
+
+
 }

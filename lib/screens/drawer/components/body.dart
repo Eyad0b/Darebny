@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../../../const_values.dart';
@@ -41,9 +42,9 @@ class _BodyState extends State<Body> {
                     radius: Checkbox.width * 2.5,
                     child: ClipRRect(
                       borderRadius: BorderRadius.circular(Checkbox.width * 2.5),
-                      child: const Image(
+                      child: Image.network(
+                        "https://firebasestorage.googleapis.com/v0/b/darebny-42086.appspot.com/o/assets%2Fimages%2Fcategories%2Ftechnology.png?alt=media&token=1299b6ca-4968-4b7b-90cc-a2a0c97dd3c5",
                         fit: BoxFit.contain,
-                        image: AssetImage('assets/images/13.jpg'),
                       ),
                     ),
                   ),
@@ -52,7 +53,7 @@ class _BodyState extends State<Body> {
                   height: 15,
                 ),
                 Text(
-                  'Daribny Group',
+                  FirebaseAuth.instance.currentUser!.displayName.toString(),
                   style: TextStyle(
                     color: ConsValues.THEME_5,
                     fontSize: 22,

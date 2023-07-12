@@ -33,13 +33,13 @@ class _IconsFieldsState extends State<IconsFields> {
     'Art',
   ];
   List<String> majorimage = [
-    'lib/assets/images/teacher.jpg',
-    'lib/assets/images/cooking.jpg',
-    'lib/assets/images/sports.jpg',
-    'lib/assets/images/engineering.jpg',
-    'lib/assets/images/medical.jpg',
-    'lib/assets/images/Business.jpg',
-    'lib/assets/images/art.jpg'
+    'assets/images/teacher.jpg',
+    'assets/images/cooking.jpg',
+    'assets/images/sports.jpg',
+    'assets/images/engineering.jpg',
+    'assets/images/medical.jpg',
+    'assets/images/Business.jpg',
+    'assets/images/art.jpg'
   ];
   @override
   Widget build(BuildContext context) {

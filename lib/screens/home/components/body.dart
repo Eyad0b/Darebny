@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:darebny/const_values.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -18,6 +19,23 @@ bool heart3IsPressed = false;
 
 class _BodyState extends State<Body> {
   late double width, height;
+
+  //try 1
+  final CollectionReference _collectionRef =
+      FirebaseFirestore.instance.collection('Opportunities');
+  late Future<List<Object?>> opportunities;
+
+  //try 2
+  final Stream<QuerySnapshot> _usersStream =
+      FirebaseFirestore.instance.collection('Opportunities').snapshots();
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    //try 1
+    //getData();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,96 +62,6 @@ class _BodyState extends State<Body> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          // //Searsh bar
-          // Row(
-          //   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          //   children: [
-          //     Container(
-          //       margin: EdgeInsets.only(
-          //         // right: width * .1,
-          //         left: width * .05,
-          //         top: height * .025,
-          //         bottom: height * .015,
-          //       ),
-          //       height: height * .06,
-          //       width: width * .63,
-          //       decoration: BoxDecoration(
-          //         color: ConsValues.WHITE,
-          //         borderRadius: BorderRadius.circular(15),
-          //         boxShadow: <BoxShadow>[
-          //           BoxShadow(
-          //             color: ConsValues.THEME_5.withOpacity(.1),
-          //             blurStyle: BlurStyle.outer,
-          //             blurRadius: Checkbox.width,
-          //           ),
-          //         ],
-          //       ),
-          //       child: TextField(
-          //         decoration: InputDecoration(
-          //           prefixIcon: Container(
-          //             margin: const EdgeInsets.all(Checkbox.width / 1.3),
-          //             child: SvgPicture.asset(
-          //               'lib/assets/icons/icons/Search Icon.svg',
-          //               fit: BoxFit.fill,
-          //             ),
-          //           ),
-          //           hintText: 'Search...',
-          //           hintStyle: const TextStyle(
-          //             fontSize: 17,
-          //             color: Colors.black45,
-          //             fontWeight: FontWeight.w500,
-          //             // fontFamily: "muli",
-          //           ),
-          //           border: InputBorder.none,
-          //         ),
-          //       ),
-          //     ),
-          //     Container(
-          //       margin: EdgeInsets.only(
-          //         right: width * .05,
-          //         top: height * .025,
-          //       ),
-          //       height: height * .05,
-          //       width: width * .25,
-          //       decoration: const BoxDecoration(
-          //         // color: ConsValues.WHITE.withOpacity(.2),
-          //         shape: BoxShape.rectangle,
-          //         borderRadius: BorderRadius.all(
-          //           Radius.circular(Checkbox.width),
-          //         ),
-          //       ),
-          //       alignment: Alignment.centerLeft,
-          //       child: Row(
-          //         children: [
-          //           Container(
-          //             height: height * .035,
-          //             width: width * .07,
-          //             margin: EdgeInsets.only(
-          //               left: width * .02,
-          //             ),
-          //             decoration: BoxDecoration(
-          //               color: ConsValues.THEME_4,
-          //               shape: BoxShape.circle,
-          //             ),
-          //             alignment: Alignment.center,
-          //             child: Icon(
-          //               Icons.filter_list,
-          //               size: height * .025,
-          //               color: ConsValues.THEME_3,
-          //             ),
-          //           ),
-          //           SizedBox(
-          //             width: width * .02,
-          //           ),
-          //           Text(
-          //             "Filters",
-          //             style: TextStyle(color: ConsValues.THEME_4),
-          //           ),
-          //         ],
-          //       ),
-          //     ),
-          //   ],
-          // ),
           // Special for you
           _buildTitleText(
             title: "Recently Added",
@@ -143,38 +71,37 @@ class _BodyState extends State<Body> {
           SizedBox(
             // color: Colors.lime,
             height: height * .188,
-            child: ListView(
-              scrollDirection: Axis.horizontal,
-              children: [
-                InkWell(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const TrainingDetails()),
+            child: StreamBuilder<QuerySnapshot>(
+              stream: _usersStream,
+              builder: (BuildContext context,
+                  AsyncSnapshot<QuerySnapshot> snapshot) {
+                if (snapshot.hasError) {
+                  return Text('Something went wrong');
+                }
+
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Text("Loading");
+                }
+
+                return ListView(
+                  scrollDirection: Axis.horizontal,
+                  children:
+                      snapshot.data!.docs.map((DocumentSnapshot document) {
+                    Map<String, dynamic> data =
+                        document.data()! as Map<String, dynamic>;
+                    return _buildRecentlyAddedItems(
+                      title: data['title'] ?? "null",
+                      supTitle: data['supTitle'] ?? "null",
+                      address: data['address'] ?? "null",
+                      companyImageUrl: data['companyImageUrl'] ?? "null",
+                      requirements: data['requirements'] ?? "null",
+                      description: data['description'] ?? "null",
+                      date: data['date'],
+                      backgroundImageUrl: data['backgroundImageUrl'] ?? "null",
                     );
-                  },
-                  child: _buildRecentlyAddedItems(
-                    title: "Marketing training",
-                    supTitle: "Google",
-                    backGroundImagePath: "assets/images/Image Banner 2.png",
-                  ),
-                ),
-                InkWell(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const TrainingDetails()),
-                    );
-                  },
-                  child: _buildRecentlyAddedItems(
-                    title: "Fashion",
-                    supTitle: "20 Brands",
-                    backGroundImagePath: "assets/images/Image Banner 3.png",
-                  ),
-                ),
-              ],
+                  }).toList(),
+                );
+              },
             ),
           ),
           // Category's
@@ -189,19 +116,17 @@ class _BodyState extends State<Body> {
                 children: [
                   _buildCategoryItem(
                     title: "Medicine",
-                    itemImagePath: "assets/images/11.jpg",
+                    itemImagePath: "assets/images/medical.jpg",
                     heartIsPressed: heart1IsPressed,
                   ),
                   _buildCategoryItem(
                     title: "Engineering",
-                    itemImagePath:
-                        "assets/images/2.jpg",
+                    itemImagePath: "assets/images/engineering.jpg",
                     heartIsPressed: heart2IsPressed,
                   ),
                   _buildCategoryItem(
                     title: "Teaching",
-                    itemImagePath:
-                        "assets/images/3.jpg",
+                    itemImagePath: "assets/images/teacher.jpg",
                     heartIsPressed: heart3IsPressed,
                   ),
                 ],
@@ -211,19 +136,17 @@ class _BodyState extends State<Body> {
                 children: [
                   _buildCategoryItem(
                     title: "Cooking",
-                    itemImagePath: "assets/images/4.jpg",
+                    itemImagePath: "assets/images/cooking.jpg",
                     heartIsPressed: heart1IsPressed,
                   ),
                   _buildCategoryItem(
                     title: "Business",
-                    itemImagePath:
-                        "assets/images/13.jpg",
+                    itemImagePath: "assets/images/Business.jpg",
                     heartIsPressed: heart2IsPressed,
                   ),
                   _buildCategoryItem(
                     title: "Arts",
-                    itemImagePath:
-                        "assets/images/6.jpg",
+                    itemImagePath: "assets/images/art.jpg",
                     heartIsPressed: heart3IsPressed,
                   ),
                 ],
@@ -233,19 +156,17 @@ class _BodyState extends State<Body> {
                 children: [
                   _buildCategoryItem(
                     title: "Training",
-                    itemImagePath: "assets/images/7.jpg",
+                    itemImagePath: "assets/images/training.jpg",
                     heartIsPressed: heart1IsPressed,
                   ),
                   _buildCategoryItem(
                     title: "Media",
-                    itemImagePath:
-                        "assets/images/8.jpg",
+                    itemImagePath: "assets/images/media.jpg",
                     heartIsPressed: heart2IsPressed,
                   ),
                   _buildCategoryItem(
                     title: "Filmmaker",
-                    itemImagePath:
-                        "assets/images/10.jpg",
+                    itemImagePath: "assets/images/filmmaker.jpg",
                     heartIsPressed: heart3IsPressed,
                   ),
                 ],
@@ -258,9 +179,7 @@ class _BodyState extends State<Body> {
   }
 
   Widget _buildTitleText(
-      {required String title,
-      double margin = 2.0,
-      double bottomPadding = 2}) {
+      {required String title, double margin = 2.0, double bottomPadding = 2}) {
     return Container(
       height: height * .05,
       // margin: EdgeInsets.only(top: Checkbox.width / 8),
@@ -301,7 +220,12 @@ class _BodyState extends State<Body> {
   Widget _buildRecentlyAddedItems({
     required String title,
     required String supTitle,
-    required String backGroundImagePath,
+    required String companyImageUrl,
+    required String address,
+    required String requirements,
+    required String description,
+    required String date,
+    required String backgroundImageUrl,
   }) {
     return Container(
       padding: const EdgeInsets.only(
@@ -347,48 +271,66 @@ class _BodyState extends State<Body> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    width: width * .1,
-                    height: height * .05,
-                    padding: const EdgeInsets.all(Checkbox.width / 2),
-                    decoration: BoxDecoration(
-                      color: ConsValues.THEME_3,
-                      borderRadius: BorderRadius.all(
-                        Radius.circular(width * .02),
+              InkWell(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => TrainingDetails(
+                        title: title,
+                        date: date,
+                        description: description,
+                        requirements: requirements,
+                        address: address,
+                        supTitle: supTitle,
+                        backgroundImageUrl: backgroundImageUrl,
                       ),
                     ),
-                    child: SvgPicture.asset(
-                      "assets/icons/google-icon.svg",
-                    ),
-                  ),
-                  SizedBox(width: width * .03),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        supTitle,
-                        style: TextStyle(
-                          fontSize: width * .03,
-                          color: ConsValues.THEME_3.withOpacity(.8),
-                          fontWeight: FontWeight.bold,
-                          fontFamily: "muli",
-                        ),
-                      ),
-                      Text(
-                        title,
-                        style: TextStyle(
-                          fontSize: width * .04,
+                  );
+                },
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                        width: width * .1,
+                        height: height * .05,
+                        padding: const EdgeInsets.all(Checkbox.width / 2),
+                        decoration: BoxDecoration(
                           color: ConsValues.THEME_3,
-                          fontWeight: FontWeight.bold,
-                          fontFamily: "muli",
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(width * .02),
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
-                ],
+                        child: SvgPicture.network(
+                          companyImageUrl,
+                          fit: BoxFit.fill,
+                        )),
+                    SizedBox(width: width * .03),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          supTitle,
+                          style: TextStyle(
+                            fontSize: width * .03,
+                            color: ConsValues.THEME_3.withOpacity(.8),
+                            fontWeight: FontWeight.bold,
+                            fontFamily: "muli",
+                          ),
+                        ),
+                        Text(
+                          title,
+                          style: TextStyle(
+                            fontSize: width * .04,
+                            color: ConsValues.THEME_3,
+                            fontWeight: FontWeight.bold,
+                            fontFamily: "muli",
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
               Icon(
                 Icons.bookmark_border,
@@ -400,12 +342,12 @@ class _BodyState extends State<Body> {
           Row(
             children: [
               SvgPicture.asset(
-                "assets/icons/icons/Location point.svg",
+                "assets/icons/Location point.svg",
                 color: ConsValues.THEME_3,
               ),
               SizedBox(width: width * .02),
               Text(
-                "Jordan, Irbid",
+                address,
                 style: TextStyle(
                   color: ConsValues.THEME_3,
                   fontSize: width * .03,
@@ -514,5 +456,15 @@ class _BodyState extends State<Body> {
         ],
       ),
     );
+  }
+
+  Future<void> getData() async {
+    // Get docs from collection reference
+    QuerySnapshot querySnapshot = await _collectionRef.get();
+
+    // Get data from docs and convert map to List
+    final opportunities = querySnapshot.docs.map((doc) => doc.data()).toList();
+
+    print(opportunities);
   }
 }

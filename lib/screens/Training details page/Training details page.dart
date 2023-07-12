@@ -3,7 +3,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 class TrainingDetails extends StatefulWidget {
-  const TrainingDetails({super.key});
+  TrainingDetails({
+    required this.title,
+    required this.date,
+    required this.description,
+    required this.requirements,
+    required this.address,
+    required this.supTitle,
+    required this.backgroundImageUrl,
+    super.key,
+  });
+
+  String requirements;
+  String description;
+  String title;
+  String date;
+  String address;
+  String supTitle;
+  String backgroundImageUrl;
 
   @override
   State<TrainingDetails> createState() => _TrainingDetailsState();
@@ -16,9 +33,9 @@ class _TrainingDetailsState extends State<TrainingDetails> {
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         title: Text(
-          'Training details',
+          '${widget.supTitle} Opportunity details',
         ),
-        systemOverlayStyle: SystemUiOverlayStyle(
+        systemOverlayStyle: const SystemUiOverlayStyle(
           statusBarColor: Colors.transparent,
         ),
         actions: [
@@ -31,7 +48,7 @@ class _TrainingDetailsState extends State<TrainingDetails> {
               ),
               height: MediaQuery.of(context).size.height * 0.09,
               width: MediaQuery.of(context).size.width * 0.09,
-              child: Icon(
+              child: const Icon(
                 Icons.bookmark_outlined,
                 color: Colors.white,
               ),
@@ -39,24 +56,24 @@ class _TrainingDetailsState extends State<TrainingDetails> {
           )
         ],
         backgroundColor: Colors.transparent,
-        leading: BackButton(),
+        leading: const BackButton(),
         elevation: 0,
       ),
       body: Container(
-        color: Color.fromRGBO(218, 218, 218, 0.39),
+        color: const Color.fromRGBO(218, 218, 218, 0.39),
         child: Column(
           children: [
-            CoverDetailsp(),
+            CoverDetailsp(backgroundImageUrl: widget.backgroundImageUrl),
             Expanded(
               child: ListView(
                 scrollDirection: Axis.vertical,
                 children: [
-                  OfferTitle(),
-                  Date(),
-                  Locationinfo(),
-                  Jobdes(),
-                  requirements(),
-                  ApplyButton(),
+                  OfferTitle(title: widget.title),
+                  Date(date: widget.date),
+                  Locationinfo(address: widget.address),
+                  Jobdes(description: widget.description),
+                  Requirements(requirements: widget.requirements),
+                  const ApplyButton(),
                 ],
               ),
             ),

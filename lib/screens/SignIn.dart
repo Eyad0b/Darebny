@@ -180,12 +180,12 @@ class _SignInState extends State<SignIn> {
                         const Color.fromRGBO(205, 67, 58, 1)),
                   ),
                   onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const HomeScreen()),
-                    );
-                    createuser;
+                    // Navigator.push(
+                    //   context,
+                    //   MaterialPageRoute(
+                    //       builder: (context) => const HomeScreen()),
+                    // );
+                    signInWithEmailAndPassword();
                   }, // Call createuser function
                   child: const Text(
                     "SIGN IN",
@@ -256,7 +256,7 @@ class _SignInState extends State<SignIn> {
     );
   }
 
-  void createuser() async {
+  void signInWithEmailAndPassword() async {
     try {
       final credential = await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: emailController.text,
@@ -270,6 +270,7 @@ class _SignInState extends State<SignIn> {
       }
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
+        print("No user found for that email.");
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             backgroundColor: Colors.cyan,
@@ -278,12 +279,18 @@ class _SignInState extends State<SignIn> {
           ),
         );
       } else if (e.code == 'wrong-password') {
+        print("Wrong password provided for that user.");
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             backgroundColor: Colors.cyan,
             content: Text("Wrong password provided for that user."),
             duration: Duration(seconds: 5),
           ),
+        );
+      } else {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => const HomeScreen()),
         );
       }
     }
