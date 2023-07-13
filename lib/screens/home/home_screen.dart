@@ -1,6 +1,7 @@
 // import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:darebny/const_values.dart';
+import 'package:darebny/screens/home/components/saved_opportunity.dart';
 import 'package:darebny/screens/listing_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -23,10 +24,10 @@ late double height;
 
 int _page = 0;
 List<Widget> _pages = [
-  Body(),
-  ListingPage(),
-  Body(),
-  Body(),
+  const Body(),
+  const ListingPage(),
+  const SavedOpportunity(),
+  const Body(),
 ];
 // GlobalKey<CurvedNavigationBarState> _bottomNavigationKey = GlobalKey();
 

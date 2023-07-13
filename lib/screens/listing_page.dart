@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:darebny/screens/search_page.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'job.dart';
@@ -22,7 +23,9 @@ class _ListingPageState extends State<ListingPage> {
     setState(() {
       jobList = data['jobs']
           .map((data) => Job.fromJson(data)).toList();
-      print("*****************${jobList.length}");
+      if (kDebugMode) {
+        print("*****************${jobList.length}");
+      }
     });
   }
 
@@ -70,7 +73,7 @@ class _ListingPageState extends State<ListingPage> {
 class JobComponent extends StatefulWidget {
   final Job job;
 
-  JobComponent({required this.job});
+  const JobComponent({super.key, required this.job});
 
   @override
   _JobComponentState createState() => _JobComponentState();
@@ -104,7 +107,7 @@ class _JobComponentState extends State<JobComponent> {
               Expanded(
                 child: Row(
                   children: [
-                    Container(
+                    SizedBox(
                       width: 60,
                       height: 60,
                       child: ClipRRect(
@@ -255,13 +258,11 @@ class SearchBarDelegate extends SearchDelegate<String> {
   @override
   Widget buildSuggestions(BuildContext context) {
     // Implement your search suggestions here
-    return Container(
-      child: ListView.builder(
-          padding: const EdgeInsets.only(left:20,right: 20,bottom: 20,top:10),
-          itemCount: jobList.length,
-          itemBuilder: (context, index) {
-            return JobComponent(job: jobList[index]);
-          }),
-    );
+    return ListView.builder(
+        padding: const EdgeInsets.only(left:20,right: 20,bottom: 20,top:10),
+        itemCount: jobList.length,
+        itemBuilder: (context, index) {
+          return JobComponent(job: jobList[index]);
+        });
   }
 }
