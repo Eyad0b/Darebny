@@ -1,12 +1,17 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:darebny/const_values.dart';
+import 'package:darebny/providers/category_provider.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:badges/badges.dart' as badges;
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../Models/category_model.dart';
+import '../../../Models/opportunity_model.dart';
 import '../../../general.dart';
+import '../../../providers/opportunities_provider.dart';
 import '../../Training details page/Training details page.dart';
 
 class Body extends StatefulWidget {
@@ -32,8 +37,11 @@ class _BodyState extends State<Body> {
   // late Future<List<Object?>> opportunities;
 
   //try 2
-  final Stream<QuerySnapshot> _opportunitiesStream =
-      FirebaseFirestore.instance.collection('Opportunities').snapshots();
+  // final Stream<QuerySnapshot> _opportunitiesStream = FirebaseFirestore.instance
+  //     .collection('Opportunities')
+  //     .orderBy('timestamp', descending: true)
+  //     .limit(5)
+  //     .snapshots();
   final Stream<QuerySnapshot> _categoriesStream =
       FirebaseFirestore.instance.collection('Categories').snapshots();
   // final Stream<QuerySnapshot> _savedOpportunitiesStream = FirebaseFirestore
@@ -88,177 +96,108 @@ class _BodyState extends State<Body> {
     height = MediaQuery.of(context).size.height;
     // Create a CollectionReference called users that references the firestore collection
 
-    return SingleChildScrollView(
-      child: Container(
-        decoration: ShapeDecoration(
-          color: Colors.grey.withOpacity(.15),
-          shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(40),
-              topRight: Radius.circular(40),
+    return Container(
+      decoration: ShapeDecoration(
+        color: ConsValues.BACKGROUND_COLOR,
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(40),
+            topRight: Radius.circular(40),
+          ),
+        ),
+        shadows: const <BoxShadow>[
+          BoxShadow(
+            color: Colors.white,
+            blurStyle: BlurStyle.outer,
+            blurRadius: Checkbox.width,
+          ),
+        ],
+      ),
+      height: height,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          // Special for you
+          SizedBox(height: height * .01,),
+          _buildTitleText(
+            title: "Recently Added",
+            margin: 1.3,
+            bottomPadding: 1.5,
+          ),
+          SizedBox(
+            // color: Colors.lime,
+            height: height * .188,
+            child: FutureBuilder<List<Opportunity>>(
+              future: Provider.of<OpportunitiesProvider>(context).getOpportunities(),
+              builder: (BuildContext context, AsyncSnapshot<List<Opportunity>> snapshot) {
+                if (snapshot.hasError) {
+                  return const Text('Something went wrong');
+                }
+
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(
+                    child: CircularProgressIndicator(
+                      color: ConsValues.THEME_4,
+                    ),
+                  );
+                }
+
+                return ListView(
+                  scrollDirection: Axis.horizontal,
+                  children: snapshot.data!.take(6).map((Opportunity opportunity) {
+                    return _buildRecentlyAddedItems(opportunity: opportunity,);
+                  }).toList(),
+                );
+              },
             ),
           ),
-          shadows: const <BoxShadow>[
-            BoxShadow(
-              color: Colors.white,
-              blurStyle: BlurStyle.outer,
-              blurRadius: Checkbox.width,
-            ),
-          ],
-        ),
-        height: height,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: [
-            // Special for you
-            _buildTitleText(
-              title: "Recently Added",
-              margin: 1.3,
-              bottomPadding: 1.5,
-            ),
-            SizedBox(
-              // color: Colors.lime,
-              height: height * .188,
-              child: StreamBuilder<QuerySnapshot>(
-                stream: _opportunitiesStream,
-                builder: (BuildContext context,
-                    AsyncSnapshot<QuerySnapshot> snapshot) {
-                  if (snapshot.hasError) {
-                    return const Text('Something went wrong');
-                  }
+          // Category's
+          _buildTitleText(
+            title: "Category",
+          ),
+          SizedBox(
+            height: height * .48,
+            child: StreamBuilder<QuerySnapshot>(
+              stream: Provider.of<CategoryProvider>(context).getCategories(),
+              builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
+                if (snapshot.hasError) {
+                  return const Text('Something went wrong');
+                }
 
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Text("Loading");
-                  }
-
-                  return ListView(
-                    scrollDirection: Axis.horizontal,
-                    children:
-                        snapshot.data!.docs.map((DocumentSnapshot document) {
-                      Map<String, dynamic> data =
-                          document.data()! as Map<String, dynamic>;
-                      print(
-                          "Data.tostring() =  ${FirebaseAuth.instance.currentUser!.uid}");
-                      return _buildRecentlyAddedItems(
-                        title: data['title'] ?? "null",
-                        supTitle: data['supTitle'] ?? "null",
-                        address: data['address'] ?? "null",
-                        companyImageUrl: data['companyImageUrl'] ?? "null",
-                        requirements: data['requirements'] ?? "null",
-                        description: data['description'] ?? "null",
-                        date: data['date'],
-                        backgroundImageUrl: data['backgroundImageUrl'] ?? "null",
-                        category1: data["category1"] ?? "null",
-                        category2: data["category2"] ?? "null",
-                        documentId: document.id,
-                      );
-                    }).toList(),
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(
+                    child: CircularProgressIndicator(
+                      color: ConsValues.THEME_4,
+                    ),
                   );
-                },
-              ),
+                }
+
+                return GridView(
+                  scrollDirection: Axis.vertical,
+                  padding: EdgeInsets.only(right: height * .015, left: height * .015),
+                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 3),
+                  children: snapshot.data!.docs.map((DocumentSnapshot document) {
+                    return FutureBuilder<Category>(
+                      future: Provider.of<CategoryProvider>(context).getCategoryById(document.id),
+                      builder: (BuildContext context, AsyncSnapshot<Category> snapshot) {
+                        if (snapshot.hasError) {
+                          return const Text('Something went wrong');
+                        }
+
+                        if (snapshot.connectionState == ConnectionState.waiting) {
+                          return const SizedBox.shrink();
+                        }
+
+                        return _buildCategoryItem(category: snapshot.data!,);
+                      },
+                    );
+                  }).toList(),
+                );
+              },
             ),
 
-            // Category's
-            _buildTitleText(
-              title: "Category",
-            ),
-            SizedBox(
-              height: height * .3,
-              child: StreamBuilder<QuerySnapshot>(
-                stream: _categoriesStream,
-                builder: (BuildContext context,
-                    AsyncSnapshot<QuerySnapshot> snapshot) {
-                  if (snapshot.hasError) {
-                    return const Text('Something went wrong');
-                  }
-
-                  if (snapshot.connectionState == ConnectionState.waiting) {
-                    return const Text("Loading");
-                  }
-                  print(snapshot.data!.docs.length);
-                  return ListView(
-                    scrollDirection: Axis.horizontal,
-                    // gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(crossAxisCount: 1),
-                    children:
-                        snapshot.data!.docs.map((DocumentSnapshot document) {
-                      Map<String, dynamic> data =
-                          document.data()! as Map<String, dynamic>;
-                      return _buildCategoryItem(
-                        title: data["name"] ?? "null",
-                        itemImagePath: data["imageUrl"] ?? "null",
-                      );
-                    }).toList(),
-                  );
-                },
-              ),
-            ),
-            // Column(
-            //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            //   children: [
-            //     Row(
-            //       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            //       children: [
-            //         _buildCategoryItem(
-            //           title: "Medicine",
-            //           itemImagePath: "assets/images/medical.jpg",
-            //           heartIsPressed: heart1IsPressed,
-            //         ),
-            //         _buildCategoryItem(
-            //           title: "Engineering",
-            //           itemImagePath: "assets/images/engineering.jpg",
-            //           heartIsPressed: heart2IsPressed,
-            //         ),
-            //         _buildCategoryItem(
-            //           title: "Teaching",
-            //           itemImagePath: "assets/images/teacher.jpg",
-            //           heartIsPressed: heart3IsPressed,
-            //         ),
-            //       ],
-            //     ),
-            //     Row(
-            //       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            //       children: [
-            //         _buildCategoryItem(
-            //           title: "Cooking",
-            //           itemImagePath: "assets/images/cooking.jpg",
-            //           heartIsPressed: heart1IsPressed,
-            //         ),
-            //         _buildCategoryItem(
-            //           title: "Business",
-            //           itemImagePath: "assets/images/Business.jpg",
-            //           heartIsPressed: heart2IsPressed,
-            //         ),
-            //         _buildCategoryItem(
-            //           title: "Arts",
-            //           itemImagePath: "assets/images/art.jpg",
-            //           heartIsPressed: heart3IsPressed,
-            //         ),
-            //       ],
-            //     ),
-            //     Row(
-            //       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            //       children: [
-            //         _buildCategoryItem(
-            //           title: "Training",
-            //           itemImagePath: "assets/images/training.jpg",
-            //           heartIsPressed: heart1IsPressed,
-            //         ),
-            //         _buildCategoryItem(
-            //           title: "Media",
-            //           itemImagePath: "assets/images/media.jpg",
-            //           heartIsPressed: heart2IsPressed,
-            //         ),
-            //         _buildCategoryItem(
-            //           title: "Filmmaker",
-            //           itemImagePath: "assets/images/filmmaker.jpg",
-            //           heartIsPressed: heart3IsPressed,
-            //         ),
-            //       ],
-            //     ),
-            //   ],
-            // ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -285,35 +224,13 @@ class _BodyState extends State<Body> {
               fontFamily: "muli",
             ),
           ),
-          TextButton(
-            onPressed: () {},
-            child: Text(
-              "See More",
-              style: TextStyle(
-                fontSize: 15,
-                color: ConsValues.BUTTON_COLOR,
-                fontWeight: FontWeight.bold,
-                fontFamily: "muli",
-              ),
-            ),
-          ),
         ],
       ),
     );
   }
 
   Widget _buildRecentlyAddedItems({
-    required String title,
-    required String supTitle,
-    required String companyImageUrl,
-    required String address,
-    required String requirements,
-    required String description,
-    required String date,
-    required String backgroundImageUrl,
-    required String category1,
-    required String category2,
-    required String documentId,
+    required Opportunity opportunity,
   }) {
     return Container(
       padding: const EdgeInsets.only(
@@ -365,13 +282,13 @@ class _BodyState extends State<Body> {
                     context,
                     MaterialPageRoute(
                       builder: (context) => TrainingDetails(
-                        title: title,
-                        date: date,
-                        description: description,
-                        requirements: requirements,
-                        address: address,
-                        supTitle: supTitle,
-                        backgroundImageUrl: backgroundImageUrl,
+                        title: opportunity.title,
+                        date: opportunity.date,
+                        description: opportunity.description,
+                        requirements: opportunity.requirements,
+                        address: opportunity.address,
+                        supTitle: opportunity.supTitle,
+                        backgroundImageUrl: opportunity.backgroundImageUrl,
                       ),
                     ),
                   );
@@ -390,7 +307,7 @@ class _BodyState extends State<Body> {
                           ),
                         ),
                         child: SvgPicture.network(
-                          companyImageUrl,
+                          opportunity.companyImageUrl,
                           fit: BoxFit.fill,
                         )),
                     SizedBox(width: width * .03),
@@ -398,7 +315,7 @@ class _BodyState extends State<Body> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          supTitle,
+                          opportunity.supTitle,
                           style: TextStyle(
                             fontSize: width * .03,
                             color: ConsValues.THEME_3.withOpacity(.8),
@@ -407,7 +324,7 @@ class _BodyState extends State<Body> {
                           ),
                         ),
                         Text(
-                          title,
+                          opportunity.title,
                           style: TextStyle(
                             fontSize: width * .04,
                             color: ConsValues.THEME_3,
@@ -428,28 +345,28 @@ class _BodyState extends State<Body> {
                       .collection('Opportunities')
                       .doc("Saved");
 
-                  if (savedOpportunities.containsKey(documentId) &&
-                      savedOpportunities[documentId]!) {
+                  if (savedOpportunities.containsKey(opportunity.documentId) &&
+                      savedOpportunities[opportunity.documentId]!) {
                     await userRef.update({
-                      documentId: FieldValue.delete(),
+                      opportunity.documentId: FieldValue.delete(),
                     });
 
                     setState(() {
-                      savedOpportunities.remove(documentId);
+                      savedOpportunities.remove(opportunity.documentId);
                     });
                   } else {
                     await userRef.set({
-                      documentId: documentId,
+                      opportunity.documentId: opportunity.documentId,
                     }, SetOptions(merge: true));
 
                     setState(() {
-                      savedOpportunities[documentId] = true;
+                      savedOpportunities[opportunity.documentId] = true;
                     });
                   }
                 },
                 child: Icon(
-                  savedOpportunities.containsKey(documentId) &&
-                      savedOpportunities[documentId]!
+                  savedOpportunities.containsKey(opportunity.documentId) &&
+                      savedOpportunities[opportunity.documentId]!
                       ? Icons.bookmark
                       : Icons.bookmark_border,
                   color: ConsValues.THEME_3,
@@ -460,13 +377,14 @@ class _BodyState extends State<Body> {
           SizedBox(height: height * .02),
           Row(
             children: [
-              SvgPicture.asset(
-                "assets/icons/Location point.svg",
+              Icon(
+                Icons.location_on,
                 color: ConsValues.THEME_3,
+                size: 15,
               ),
               SizedBox(width: width * .02),
               Text(
-                address,
+                opportunity.address,
                 style: TextStyle(
                   color: ConsValues.THEME_3,
                   fontSize: width * .03,
@@ -489,7 +407,7 @@ class _BodyState extends State<Body> {
                   ),
                 ),
                 child: Text(
-                  category1,
+                  opportunity.category1,
                   style: TextStyle(
                     color: ConsValues.THEME_3,
                     fontSize: width * .03,
@@ -511,7 +429,7 @@ class _BodyState extends State<Body> {
                   ),
                 ),
                 child: Text(
-                  category2,
+                  opportunity.category2,
                   style: TextStyle(
                     color: ConsValues.THEME_3,
                     fontSize: width * .03,
@@ -528,15 +446,14 @@ class _BodyState extends State<Body> {
   }
 
   Widget _buildCategoryItem({
-    required String title,
-    required String itemImagePath,
+    required Category category,
   }) {
     return Container(
       margin: EdgeInsets.only(
-        // left: width * .025,
-        top: height * .00525,
-        // right: width * .025,
-        bottom: width * .015,
+        left: width * .02,
+        top: height * .01,
+        right: width * .02,
+        bottom: height * .01,
       ),
       width: width * .27,
       height: height * .13,
@@ -561,14 +478,14 @@ class _BodyState extends State<Body> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Image.network(
-            itemImagePath,
+            category.imageUrl,
             width: width * .15,
             height: height * .075,
             fit: BoxFit.fill,
           ),
           SizedBox(height: width * .015),
           Text(
-            title,
+            category.name,
             style: TextStyle(
               fontSize: width * .03,
               color: ConsValues.THEME_5,

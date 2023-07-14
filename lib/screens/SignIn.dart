@@ -1,7 +1,9 @@
+import 'package:darebny/const_values.dart';
 import 'package:darebny/screens/RessetPassword.dart';
 import 'package:darebny/screens/SignUp.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:unicons/unicons.dart';
 
 import 'home/home_screen.dart';
@@ -13,6 +15,9 @@ class SignIn extends StatefulWidget {
   State<SignIn> createState() => _SignInState();
 }
 
+late double width;
+late double height;
+
 class _SignInState extends State<SignIn> {
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
@@ -20,28 +25,33 @@ class _SignInState extends State<SignIn> {
 
   @override
   Widget build(BuildContext context) {
-    final screenSize = MediaQuery.of(context).size;
+    width = MediaQuery.of(context).size.width;
+    height = MediaQuery.of(context).size.height;
     return Scaffold(
       body: SingleChildScrollView(
         child: Container(
-          width: screenSize.width,
-          height: screenSize.height,
+          width: width,
+          height: height,
           color: const Color.fromRGBO(218, 218, 218, 0.39),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               Image.asset(
                 "assets/images/logo.gif",
-                height: 300,
-                width: screenSize.width,
+                height: height * .3,
+                width: width,
+                fit: BoxFit.cover,
               ),
-              const Row(
+              Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
+                  SizedBox(
+                    width: width * .05,
+                  ),
                   Text(
-                    "   Sign in",
+                    "Sign in",
                     style: TextStyle(
-                      color: Colors.black,
+                      color: ConsValues.THEME_5,
                       height: 1.0,
                       fontWeight: FontWeight.bold,
                       fontSize: 30,
@@ -51,18 +61,18 @@ class _SignInState extends State<SignIn> {
                 ],
               ),
               const SizedBox(height: 25),
-              Container(
-                height: 56,
-                width: screenSize.width / 1.1,
+              SizedBox(
+                height: height * .08,
+                width: width * .9,
                 child: TextField(
                   controller: emailController, // Added controller
                   decoration: InputDecoration(
                     focusedBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(
-                        color: Colors.black,
+                      borderSide: BorderSide(
+                        color: ConsValues.THEME_5,
                         width: 2.0,
                       ),
-                      borderRadius: BorderRadius.circular(25.0),
+                      borderRadius: BorderRadius.circular(10.0),
                     ),
                     filled: true,
                     fillColor: Colors.white,
@@ -91,19 +101,19 @@ class _SignInState extends State<SignIn> {
                 ),
               ),
               const SizedBox(height: 20),
-              Container(
-                height: 56,
-                width: screenSize.width / 1.1,
+              SizedBox(
+                height: height * .08,
+                width: width * .9,
                 child: TextField(
                   controller: passwordController, // Added controller
                   obscureText: !pass,
                   decoration: InputDecoration(
                     focusedBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(
-                        color: Colors.black,
+                      borderSide: BorderSide(
+                        color: ConsValues.THEME_5,
                         width: 2.0,
                       ),
-                      borderRadius: BorderRadius.circular(25.0),
+                      borderRadius: BorderRadius.circular(10.0),
                     ),
                     filled: true,
                     fillColor: Colors.white,
@@ -150,13 +160,13 @@ class _SignInState extends State<SignIn> {
                         builder: (context) => const RessetPassword()),
                   );
                 },
-                child: const Row(
+                child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Text(
                       "Forgot Password?",
                       style: TextStyle(
-                        color: Colors.black,
+                        color: ConsValues.THEME_5,
                         height: 1.0,
                         fontWeight: FontWeight.bold,
                       ),
@@ -166,9 +176,9 @@ class _SignInState extends State<SignIn> {
                 ),
               ),
               const SizedBox(height: 20),
-              Container(
-                height: 56,
-                width: screenSize.width / 1.3,
+              SizedBox(
+                height: height * .07,
+                width: width * .7,
                 child: ElevatedButton(
                   style: ButtonStyle(
                     shape: MaterialStateProperty.all(
@@ -194,10 +204,10 @@ class _SignInState extends State<SignIn> {
                 ),
               ),
               const SizedBox(height: 20),
-              const Text(
+              Text(
                 "Or continue with",
                 style: TextStyle(
-                  color: Colors.black,
+                  color: ConsValues.THEME_5,
                   height: 1.0,
                   fontWeight: FontWeight.bold,
                   fontSize: 15,
@@ -205,26 +215,25 @@ class _SignInState extends State<SignIn> {
                 textAlign: TextAlign.left,
               ),
               const SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  IconButton(
-                    onPressed: () {},
-                    icon: const Icon(
-                      UniconsLine.google,
-                      color: Colors.red,
-                      size: 35,
+              SizedBox(
+                height: height * .08,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SvgPicture.asset(
+                        "assets/icons/google-icon.svg",
+                        width: height * .035,
+                        height: height * .035,
+                      // fit: BoxFit.fitHeight,
+                      ),
+                    SizedBox(width: width * .15),
+                      Icon(
+                        Icons.facebook,
+                        color: Colors.blue,
+                        size: height * .045,
                     ),
-                  ),
-                  IconButton(
-                    onPressed: () {},
-                    icon: const Icon(
-                      Icons.facebook,
-                      color: Colors.blue,
-                      size: 35,
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
               const SizedBox(height: 5),
               Row(
@@ -237,10 +246,10 @@ class _SignInState extends State<SignIn> {
                         MaterialPageRoute(builder: (context) => const SignUp()),
                       );
                     },
-                    child: const Text(
+                    child: Text(
                       "Sign Up",
                       style: TextStyle(
-                        color: Colors.black,
+                        color: ConsValues.THEME_5,
                         height: 1.0,
                         fontWeight: FontWeight.bold,
                         fontSize: 15,
@@ -265,7 +274,7 @@ class _SignInState extends State<SignIn> {
       if (FirebaseAuth.instance.currentUser != null) {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const HomeScreen()),
+          MaterialPageRoute(builder: (context) => HomeScreen(page: 0,)),
         );
       }
     } on FirebaseAuthException catch (e) {
@@ -288,10 +297,7 @@ class _SignInState extends State<SignIn> {
           ),
         );
       } else {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => const HomeScreen()),
-        );
+        Center(child: CircularProgressIndicator(color: ConsValues.THEME_4,),);
       }
     }
   }

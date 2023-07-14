@@ -1,9 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:darebny/const_values.dart';
 import 'package:darebny/screens/SignIn.dart';
 import 'package:darebny/screens/Training%20details%20page/Training%20details%20page.dart';
 import 'package:darebny/screens/home/home_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:unicons/unicons.dart';
 
 class SignUp extends StatefulWidget {
@@ -12,6 +14,9 @@ class SignUp extends StatefulWidget {
   @override
   State<SignUp> createState() => _SignUpState();
 }
+
+late double width;
+late double height;
 
 class _SignUpState extends State<SignUp> {
   late TextEditingController emailController;
@@ -38,35 +43,29 @@ class _SignUpState extends State<SignUp> {
   @override
   Widget build(BuildContext context) {
     final screenSize = MediaQuery.of(context).size;
+    width = MediaQuery.of(context).size.width;
+    height = MediaQuery.of(context).size.height;
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
         backgroundColor: const Color.fromRGBO(218, 218, 218, 0.39),
-        leading: IconButton(
-          onPressed: () {
-            Navigator.of(context).push(MaterialPageRoute(builder: (context) => const SignIn()));
-          },
-          icon: const Icon(
-            Icons.arrow_back,
-            color: Colors.black,
-          ),
-        ),
+        iconTheme: IconThemeData(color: ConsValues.THEME_5),
       ),
       body: SingleChildScrollView(
         child: Container(
-          width: screenSize.width,
-          height: screenSize.height,
+          width: width,
+          height: height,
           color: const Color.fromRGBO(218, 218, 218, 0.39),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              SizedBox(height: screenSize.height / 10),
-              const Row(mainAxisAlignment: MainAxisAlignment.start,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
                 children: [
                   Text(
                     "  Sign Up",
                     style: TextStyle(
-                      color: Colors.black,
+                      color: ConsValues.THEME_5,
                       height: 1.0,
                       fontWeight: FontWeight.bold,
                       fontSize: 30,
@@ -76,18 +75,18 @@ class _SignUpState extends State<SignUp> {
                 ],
               ),
               const SizedBox(height: 25),
-              Container(
-                height: 56,
-                width: screenSize.width / 1.1,
+              SizedBox(
+                height: height * .08,
+                width: width * .9,
                 child: TextField(
                   controller: usernameController,
                   decoration: InputDecoration(
                     focusedBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(
-                        color: Colors.black,
+                      borderSide: BorderSide(
+                        color: ConsValues.THEME_5,
                         width: 2.0,
                       ),
-                      borderRadius: BorderRadius.circular(25.0),
+                      borderRadius: BorderRadius.circular(10.0),
                     ),
                     filled: true,
                     fillColor: Colors.white,
@@ -97,8 +96,8 @@ class _SignUpState extends State<SignUp> {
                       borderSide: BorderSide(color: Colors.white),
                     ),
                     floatingLabelBehavior: FloatingLabelBehavior.always,
-                    contentPadding:
-                    const EdgeInsets.symmetric(horizontal: 35, vertical: 25),
+                    contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 35, vertical: 25),
                     border: OutlineInputBorder(
                       gapPadding: 10,
                       borderRadius: const BorderRadius.all(Radius.circular(25)),
@@ -114,18 +113,18 @@ class _SignUpState extends State<SignUp> {
                 ),
               ),
               const SizedBox(height: 20),
-              Container(
-                height: 56,
-                width: screenSize.width / 1.1,
+              SizedBox(
+                height: height * .08,
+                width: width * .9,
                 child: TextField(
                   controller: emailController,
                   decoration: InputDecoration(
                     focusedBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(
-                        color: Colors.black,
+                      borderSide: BorderSide(
+                        color: ConsValues.THEME_5,
                         width: 2.0,
                       ),
-                      borderRadius: BorderRadius.circular(25.0),
+                      borderRadius: BorderRadius.circular(10.0),
                     ),
                     filled: true,
                     fillColor: Colors.white,
@@ -135,8 +134,8 @@ class _SignUpState extends State<SignUp> {
                       borderSide: BorderSide(color: Colors.white),
                     ),
                     floatingLabelBehavior: FloatingLabelBehavior.always,
-                    contentPadding:
-                    const EdgeInsets.symmetric(horizontal: 35, vertical: 25),
+                    contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 35, vertical: 25),
                     border: OutlineInputBorder(
                       gapPadding: 10,
                       borderRadius: const BorderRadius.all(Radius.circular(25)),
@@ -152,19 +151,19 @@ class _SignUpState extends State<SignUp> {
                 ),
               ),
               const SizedBox(height: 20),
-              Container(
-                height: 56,
-                width: screenSize.width / 1.1,
+              SizedBox(
+                height: height * .08,
+                width: width * .9,
                 child: TextField(
                   controller: passwordController,
                   obscureText: !passwordVisible,
                   decoration: InputDecoration(
                     focusedBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(
-                        color: Colors.black,
+                      borderSide: BorderSide(
+                        color: ConsValues.THEME_5,
                         width: 2.0,
                       ),
-                      borderRadius: BorderRadius.circular(25.0),
+                      borderRadius: BorderRadius.circular(10.0),
                     ),
                     filled: true,
                     fillColor: Colors.white,
@@ -173,8 +172,8 @@ class _SignUpState extends State<SignUp> {
                       borderRadius: BorderRadius.all(Radius.circular(10)),
                       borderSide: BorderSide(color: Colors.white),
                     ),
-                    contentPadding:
-                    const EdgeInsets.symmetric(horizontal: 35, vertical: 25),
+                    contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 35, vertical: 25),
                     border: OutlineInputBorder(
                       gapPadding: 10,
                       borderRadius: const BorderRadius.all(Radius.circular(25)),
@@ -193,7 +192,9 @@ class _SignUpState extends State<SignUp> {
                         });
                       },
                       icon: Icon(
-                        passwordVisible ? Icons.visibility : Icons.visibility_off,
+                        passwordVisible
+                            ? Icons.visibility
+                            : Icons.visibility_off,
                         color: Colors.grey,
                         size: 30,
                       ),
@@ -202,18 +203,18 @@ class _SignUpState extends State<SignUp> {
                 ),
               ),
               const SizedBox(height: 20),
-              Container(
-                height: 56,
-                width: screenSize.width / 1.1,
+              SizedBox(
+                height: height * .08,
+                width: width * .9,
                 child: TextField(
                   obscureText: !passwordVisible,
                   decoration: InputDecoration(
                     focusedBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(
-                        color: Colors.black,
+                      borderSide: BorderSide(
+                        color: ConsValues.THEME_5,
                         width: 2.0,
                       ),
-                      borderRadius: BorderRadius.circular(25.0),
+                      borderRadius: BorderRadius.circular(10.0),
                     ),
                     filled: true,
                     fillColor: Colors.white,
@@ -222,8 +223,8 @@ class _SignUpState extends State<SignUp> {
                       borderRadius: BorderRadius.all(Radius.circular(10)),
                       borderSide: BorderSide(color: Colors.white),
                     ),
-                    contentPadding:
-                    const EdgeInsets.symmetric(horizontal: 35, vertical: 25),
+                    contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 35, vertical: 25),
                     border: OutlineInputBorder(
                       gapPadding: 10,
                       borderRadius: const BorderRadius.all(Radius.circular(25)),
@@ -242,7 +243,9 @@ class _SignUpState extends State<SignUp> {
                         });
                       },
                       icon: Icon(
-                        passwordVisible ? Icons.visibility : Icons.visibility_off,
+                        passwordVisible
+                            ? Icons.visibility
+                            : Icons.visibility_off,
                         color: Colors.grey,
                         size: 30,
                       ),
@@ -252,9 +255,9 @@ class _SignUpState extends State<SignUp> {
               ),
               const SizedBox(height: 15),
               const SizedBox(height: 20),
-              Container(
-                height: 56,
-                width:screenSize.width / 1.3,
+              SizedBox(
+                height: height * .07,
+                width: width * .7,
                 child: ElevatedButton(
                   style: ButtonStyle(
                     shape: MaterialStateProperty.all(
@@ -262,10 +265,10 @@ class _SignUpState extends State<SignUp> {
                         borderRadius: BorderRadius.circular(15),
                       ),
                     ),
-                    backgroundColor:
-                    MaterialStateProperty.all(const Color.fromRGBO(205, 67, 58, 1)),
+                    backgroundColor: MaterialStateProperty.all(
+                        const Color.fromRGBO(205, 67, 58, 1)),
                   ),
-                  onPressed:() => createUserWithEmailAndPassword(),
+                  onPressed: () => createUserWithEmailAndPassword(),
                   child: const Text(
                     "SIGN UP",
                     style: TextStyle(color: Colors.white),
@@ -273,10 +276,10 @@ class _SignUpState extends State<SignUp> {
                 ),
               ),
               const SizedBox(height: 20),
-              const Text(
+              Text(
                 "Or continue with",
                 style: TextStyle(
-                  color: Colors.black,
+                  color: ConsValues.THEME_5,
                   height: 1.0,
                   fontWeight: FontWeight.bold,
                   fontSize: 15,
@@ -284,26 +287,25 @@ class _SignUpState extends State<SignUp> {
                 textAlign: TextAlign.left,
               ),
               const SizedBox(height: 20),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  IconButton(
-                    onPressed: () {},
-                    icon: const Icon(
-                      UniconsLine.google,
-                      color: Colors.red,
-                      size: 35,
+              SizedBox(
+                height: height * .08,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    SvgPicture.asset(
+                      "assets/icons/google-icon.svg",
+                      width: height * .035,
+                      height: height * .035,
+                      // fit: BoxFit.fitHeight,
                     ),
-                  ),
-                  IconButton(
-                    onPressed: () {},
-                    icon: const Icon(
+                    SizedBox(width: width * .15),
+                    Icon(
                       Icons.facebook,
                       color: Colors.blue,
-                      size: 35,
+                      size: height * .045,
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
               const SizedBox(height: 15),
               Row(
@@ -316,10 +318,10 @@ class _SignUpState extends State<SignUp> {
                         MaterialPageRoute(builder: (context) => const SignIn()),
                       );
                     },
-                    child: const Text(
+                    child: Text(
                       "Sign in",
                       style: TextStyle(
-                        color: Colors.black,
+                        color: ConsValues.THEME_5,
                         height: 1.0,
                         fontWeight: FontWeight.bold,
                         fontSize: 15,
@@ -337,7 +339,8 @@ class _SignUpState extends State<SignUp> {
 
   void createUserWithEmailAndPassword() async {
     try {
-      final credential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      final credential =
+          await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: emailController.text,
         password: passwordController.text,
       );
@@ -345,7 +348,10 @@ class _SignUpState extends State<SignUp> {
       if (credential.user != null) {
         credential.user!.updateDisplayName(usernameController.text);
         setState(() {});
-        await FirebaseFirestore.instance.collection("Users").doc(credential.user!.uid).set({
+        await FirebaseFirestore.instance
+            .collection("Users")
+            .doc(credential.user!.uid)
+            .set({
           "name": usernameController.text,
           "Email": emailController.text,
           "Password": passwordController.text,
@@ -353,7 +359,7 @@ class _SignUpState extends State<SignUp> {
 
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => const HomeScreen()),
+          MaterialPageRoute(builder: (context) => HomeScreen(page: 0,)),
         );
       }
     } on FirebaseAuthException catch (e) {

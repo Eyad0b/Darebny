@@ -1,23 +1,31 @@
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:darebny/screens/home/components/home.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:provider/provider.dart';
 
+import '../../../Models/opportunity_model.dart';
 import '../../../const_values.dart';
+import '../../../providers/opportunities_provider.dart';
 import '../../Training details page/Training details page.dart';
 
-class SavedOpportunity extends StatefulWidget {
-  const SavedOpportunity({super.key});
+
+
+class AllOpportunities extends StatefulWidget {
+  const AllOpportunities({super.key});
 
   @override
-  State<SavedOpportunity> createState() => _SavedOpportunityState();
+  State<AllOpportunities> createState() => _AllOpportunitiesState();
 }
 
 late double width, height;
 
-class _SavedOpportunityState extends State<SavedOpportunity> {
+class _AllOpportunitiesState extends State<AllOpportunities> {
+  // final Stream<QuerySnapshot> _opportunitiesStream = FirebaseFirestore.instance
+  //     .collection('Opportunities')
+  //     .snapshots();
+
   @override
   Widget build(BuildContext context) {
     width = MediaQuery.of(context).size.width;
@@ -41,103 +49,37 @@ class _SavedOpportunityState extends State<SavedOpportunity> {
           ),
         ],
       ),
-      child: StreamBuilder<QuerySnapshot>(
-        stream: savedOpportunities.isNotEmpty
-            ? FirebaseFirestore.instance
-                .collection('Opportunities')
-                .where(FieldPath.documentId, whereIn: savedOpportunities.keys)
-                .snapshots()
-            : null,
-        builder: (BuildContext context, AsyncSnapshot<QuerySnapshot> snapshot) {
-          if (snapshot.hasError) {
-            return const Text('Something went wrong');
-          }
+      child: Padding(
+        padding: EdgeInsets.only(top: height * .03,left: width * .03,right: width * .03,),
+        child: FutureBuilder<List<Opportunity>>(
+          future: Provider.of<OpportunitiesProvider>(context).getOpportunities(),
+          builder: (BuildContext context, AsyncSnapshot<List<Opportunity>> snapshot) {
+            if (snapshot.hasError) {
+              return const Text('Something went wrong');
+            }
 
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Text("Loading");
-          }
-
-          final docs = snapshot.data?.docs ?? [];
-
-          if (savedOpportunities.isEmpty) {
-            return Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Image.asset(
-                  'assets/images/No data.gif',
-                  height: height * .4,
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(
+                child: CircularProgressIndicator(
+                  color: ConsValues.THEME_4,
                 ),
-                const SizedBox(height: 8),
-                Text(
-                  'No saved opportunities yet !',
-                  style: TextStyle(
-                    color: ConsValues.THEME_5,
-                    fontSize: width * .05,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                SizedBox(
-                  height: height * .01,
-                ),
-                Text(
-                  'press save icon on any opportunity to move it here.',
-                  style: TextStyle(
-                    color: ConsValues.THEME_5,
-                    fontSize: width * .03,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
-              ],
-            );
-          }
+              );
+            }
 
-          final filteredDocs = docs.where((document) {
-            final documentId = document.id;
-            return savedOpportunities.containsKey(documentId) &&
-                savedOpportunities[documentId]!;
-          });
-
-          return Padding(
-            padding: EdgeInsets.only(top: height * .03,left: width * .03,right: width * .03,),
-            child: ListView(
+            return ListView(
               scrollDirection: Axis.vertical,
-              children: filteredDocs.map((DocumentSnapshot document) {
-                Map<String, dynamic> data =
-                    document.data()! as Map<String, dynamic>;
-                print("Data.tostring() =  ${FirebaseAuth.instance.currentUser!.uid}");
-                return _buildSavedOpportunityItems(
-                  title: data['title'] ?? "null",
-                  supTitle: data['supTitle'] ?? "null",
-                  address: data['address'] ?? "null",
-                  companyImageUrl: data['companyImageUrl'] ?? "null",
-                  requirements: data['requirements'] ?? "null",
-                  description: data['description'] ?? "null",
-                  date: data['date'],
-                  backgroundImageUrl: data['backgroundImageUrl'] ?? "null",
-                  category1: data["category1"] ?? "null",
-                  category2: data["category2"] ?? "null",
-                  documentId: document.id,
-                );
+              children: snapshot.data!.map((Opportunity opportunity) {
+                return _buildAllOpportunityItems(opportunity: opportunity,);
               }).toList(),
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }
 
-  Widget _buildSavedOpportunityItems({
-    required String title,
-    required String supTitle,
-    required String companyImageUrl,
-    required String address,
-    required String requirements,
-    required String description,
-    required String date,
-    required String backgroundImageUrl,
-    required String category1,
-    required String category2,
-    required String documentId,
+  Widget _buildAllOpportunityItems({
+    required Opportunity opportunity,
   }) {
     return Container(
       // height: height * .2,
@@ -176,19 +118,19 @@ class _SavedOpportunityState extends State<SavedOpportunity> {
                               context,
                               MaterialPageRoute(
                                 builder: (context) => TrainingDetails(
-                                  title: title,
-                                  date: date,
-                                  description: description,
-                                  requirements: requirements,
-                                  address: address,
-                                  supTitle: supTitle,
-                                  backgroundImageUrl: backgroundImageUrl,
+                                  title: opportunity.title,
+                                  date: opportunity.date,
+                                  description: opportunity.description,
+                                  requirements: opportunity.requirements,
+                                  address: opportunity.address,
+                                  supTitle: opportunity.supTitle,
+                                  backgroundImageUrl: opportunity.backgroundImageUrl,
                                 ),
                               ),
                             );
                           },
                           child: SvgPicture.network(
-                            companyImageUrl,
+                            opportunity.companyImageUrl,
                           ),
                         ),
                       ),
@@ -201,13 +143,13 @@ class _SavedOpportunityState extends State<SavedOpportunity> {
                             context,
                             MaterialPageRoute(
                               builder: (context) => TrainingDetails(
-                                title: title,
-                                date: date,
-                                description: description,
-                                requirements: requirements,
-                                address: address,
-                                supTitle: supTitle,
-                                backgroundImageUrl: backgroundImageUrl,
+                                title: opportunity.title,
+                                date: opportunity.date,
+                                description: opportunity.description,
+                                requirements: opportunity.requirements,
+                                address: opportunity.address,
+                                supTitle: opportunity.supTitle,
+                                backgroundImageUrl: opportunity.backgroundImageUrl,
                               ),
                             ),
                           );
@@ -217,7 +159,7 @@ class _SavedOpportunityState extends State<SavedOpportunity> {
                           children: [
                             SizedBox(height: height * .01),
                             Text(
-                              date,
+                              opportunity.date,
                               style: TextStyle(
                                 color: Colors.red.shade800,
                                 fontSize: 12,
@@ -225,7 +167,7 @@ class _SavedOpportunityState extends State<SavedOpportunity> {
                             ),
                             SizedBox(height: height * .01),
                             Text(
-                              title,
+                              opportunity.title,
                               style: const TextStyle(
                                 color: Colors.black,
                                 fontSize: 15,
@@ -242,7 +184,7 @@ class _SavedOpportunityState extends State<SavedOpportunity> {
                                 ),
                                 const SizedBox(width: 5),
                                 Text(
-                                  address,
+                                  opportunity.address,
                                   style: TextStyle(color: Colors.grey[500]),
                                 ),
                               ],
@@ -262,7 +204,7 @@ class _SavedOpportunityState extends State<SavedOpportunity> {
                                     ),
                                   ),
                                   child: Text(
-                                    category1,
+                                    opportunity.category1,
                                     style: TextStyle(
                                       color: ConsValues.THEME_5,
                                       fontSize: width * .03,
@@ -285,7 +227,7 @@ class _SavedOpportunityState extends State<SavedOpportunity> {
                                     ),
                                   ),
                                   child: Text(
-                                    category2,
+                                    opportunity.category2,
                                     style: TextStyle(
                                       color: ConsValues.THEME_5,
                                       fontSize: width * .03,
@@ -312,22 +254,22 @@ class _SavedOpportunityState extends State<SavedOpportunity> {
                       .collection('Opportunities')
                       .doc("Saved");
 
-                  if (savedOpportunities.containsKey(documentId) &&
-                      savedOpportunities[documentId]!) {
+                  if (savedOpportunities.containsKey(opportunity.documentId) &&
+                      savedOpportunities[opportunity.documentId]!) {
                     await userRef.update({
-                      documentId: FieldValue.delete(),
+                      opportunity.documentId: FieldValue.delete(),
                     });
 
                     setState(() {
-                      savedOpportunities.remove(documentId);
+                      savedOpportunities.remove(opportunity.documentId);
                     });
                   } else {
                     await userRef.set({
-                      documentId: documentId,
+                      opportunity.documentId: opportunity.documentId,
                     }, SetOptions(merge: true));
 
                     setState(() {
-                      savedOpportunities[documentId] = true;
+                      savedOpportunities[opportunity.documentId] = true;
                     });
                   }
                 },
@@ -343,8 +285,8 @@ class _SavedOpportunityState extends State<SavedOpportunity> {
                   ),
                   child: Center(
                       child: Icon(
-                    savedOpportunities.containsKey(documentId) &&
-                            savedOpportunities[documentId]!
+                    savedOpportunities.containsKey(opportunity.documentId) &&
+                            savedOpportunities[opportunity.documentId]!
                         ? Icons.bookmark
                         : Icons.bookmark_border,
                     color: ConsValues.THEME_4,
@@ -358,5 +300,4 @@ class _SavedOpportunityState extends State<SavedOpportunity> {
       ),
     );
   }
-
 }

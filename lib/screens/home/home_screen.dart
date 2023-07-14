@@ -1,18 +1,25 @@
-// import 'package:curved_navigation_bar/curved_navigation_bar.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:darebny/const_values.dart';
+import 'package:darebny/general.dart';
+import 'package:darebny/screens/home/components/all_opportunities.dart';
 import 'package:darebny/screens/home/components/saved_opportunity.dart';
-import 'package:darebny/screens/listing_page.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:darebny/screens/notification_screen.dart';
+import 'package:darebny/screens/profile_page.dart';
+
 import 'package:flutter/material.dart';
 import 'package:badges/badges.dart' as badges;
 import '../../Components/curved_button_bar.dart';
 import '../drawer/drawer_screen.dart';
-import '../home/components/body.dart';
+import '../home/components/home.dart';
 import '../search_page.dart';
 
+final GlobalKey<CurvedNavigationBarNewCopyForDaribnyState> _bottomNavigationKey =
+GlobalKey<CurvedNavigationBarNewCopyForDaribnyState>();
+
 class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+  final int page;
+  // final Function(int) onPageChanged;
+
+  HomeScreen({required this.page,Key? key}) : super(key: key);
 
 
   @override
@@ -22,12 +29,19 @@ class HomeScreen extends StatefulWidget {
 late double width;
 late double height;
 
+// replace future
+// getPrefInt() async {
+//   var rse = await General.getPrefInt("_page", 0);
+//   return rse;
+// }
+
 int _page = 0;
 List<Widget> _pages = [
   const Body(),
-  const ListingPage(),
+  const AllOpportunities(),
   const SavedOpportunity(),
-  const Body(),
+  const ProfilePage(),
+  // const Body(),
 ];
 // GlobalKey<CurvedNavigationBarState> _bottomNavigationKey = GlobalKey();
 
@@ -42,12 +56,28 @@ class _HomeScreenState extends State<HomeScreen> {
 
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    // General.savePrefInt("_page", 2);
+  }
+
+  @override
   Widget build(BuildContext context) {
     width = MediaQuery.of(context).size.width;
     height = MediaQuery.of(context).size.height;
+    // _page = widget.page;
+    // int _page = getPrefInt();
     return Stack(
       children: [
-        const DrawerScreen(),
+        DrawerScreen(
+          onPageChanged: (newPage) {
+            setState(() {
+              _page = newPage;
+            });
+            _bottomNavigationKey.currentState!.setPage(newPage);
+          },
+        ),
         AnimatedContainer(
           transform: Matrix4.translationValues(xOffset, yOffset, 0)
             ..scale(isDrawerOpen ? 0.8 : 1.00)
@@ -173,10 +203,18 @@ class _HomeScreenState extends State<HomeScreen> {
               "3",
               style: TextStyle(color: Colors.white, fontSize: height * .015),
             ),
-            child: Icon(
-              Icons.notifications_none,
-              size: height * .035,
-              color: ConsValues.THEME_5,
+            child: InkWell(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const NotificationsScreen()),
+                );
+              },
+              child: Icon(
+                Icons.notifications_none,
+                size: height * .035,
+                color: ConsValues.THEME_5,
+              ),
             ),
           ),
         ),
@@ -206,13 +244,13 @@ class _HomeScreenState extends State<HomeScreen> {
               Icon(
                 Icons.explore_outlined,
                 size: 25,
-                color: icon0Color,
+                color: _page == 0 ? ConsValues.WHITE : ConsValues.THEME_5,
               ),
               _page != 0
                   ? Text(
                       "Home",
                       style: TextStyle(
-                        color: icon0Color,
+                        color: _page == 0 ? ConsValues.WHITE : ConsValues.THEME_5,
                         fontWeight: FontWeight.w500,
                       ),
                     )
@@ -228,13 +266,13 @@ class _HomeScreenState extends State<HomeScreen> {
               Icon(
                 Icons.work_outline_rounded,
                 size: 25,
-                color: icon1Color,
+                color: _page == 1 ? ConsValues.WHITE : ConsValues.THEME_5,
               ),
               _page != 1
                   ? Text(
                       "Jobs",
                       style: TextStyle(
-                        color: icon1Color,
+                        color: _page == 1 ? ConsValues.WHITE : ConsValues.THEME_5,
                         fontWeight: FontWeight.w500,
                       ),
                     )
@@ -250,13 +288,13 @@ class _HomeScreenState extends State<HomeScreen> {
               Icon(
                 Icons.bookmark_border_rounded,
                 size: 25,
-                color: icon2Color,
+                color:_page == 2 ? ConsValues.WHITE : ConsValues.THEME_5,
               ),
               _page != 2
                   ? Text(
                       "Saved",
                       style: TextStyle(
-                        color: icon2Color,
+                        color: _page == 2 ? ConsValues.WHITE : ConsValues.THEME_5,
                         fontWeight: FontWeight.w500,
                       ),
                     )
@@ -272,13 +310,13 @@ class _HomeScreenState extends State<HomeScreen> {
               Icon(
                 Icons.person_outline_rounded,
                 size: 25,
-                color: icon3Color,
+                color: _page == 3 ? ConsValues.WHITE : ConsValues.THEME_5,
               ),
               _page != 3
                   ? Text(
                       "Profile",
                       style: TextStyle(
-                        color: icon3Color,
+                        color: _page == 3 ? ConsValues.WHITE : ConsValues.THEME_5,
                         fontWeight: FontWeight.w500,
                       ),
                     )
@@ -287,6 +325,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
       ],
+      key: _bottomNavigationKey,
       onTap: (index) {
         setState(() {
           _page = index;
