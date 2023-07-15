@@ -171,7 +171,7 @@ class _BodyState extends State<Body> {
                     ),
                   );
                 }
-
+//
                 return GridView(
                   scrollDirection: Axis.vertical,
                   padding: EdgeInsets.only(right: height * .015, left: height * .015),

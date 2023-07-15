@@ -352,9 +352,10 @@ class _SignUpState extends State<SignUp> {
             .collection("Users")
             .doc(credential.user!.uid)
             .set({
-          "name": usernameController.text,
+          "Name": usernameController.text,
           "Email": emailController.text,
           "Password": passwordController.text,
+          "UserType" : "1",
         });
 
         Navigator.push(

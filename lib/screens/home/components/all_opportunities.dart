@@ -11,7 +11,6 @@ import '../../../providers/opportunities_provider.dart';
 import '../../Training details page/Training details page.dart';
 
 
-
 class AllOpportunities extends StatefulWidget {
   const AllOpportunities({super.key});
 

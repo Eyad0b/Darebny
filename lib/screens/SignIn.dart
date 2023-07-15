@@ -4,8 +4,6 @@ import 'package:darebny/screens/SignUp.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:unicons/unicons.dart';
-
 import 'home/home_screen.dart';
 
 class SignIn extends StatefulWidget {
@@ -271,6 +269,12 @@ class _SignInState extends State<SignIn> {
         email: emailController.text,
         password: passwordController.text,
       );
+      // final user = await FirebaseFirestore.instance
+      //     .collection("Users")
+      //     .doc(credential.user!.uid)
+      //     .snapshots();
+      //
+      // user. == "1" ?
       if (FirebaseAuth.instance.currentUser != null) {
         Navigator.push(
           context,

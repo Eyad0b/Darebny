@@ -96,7 +96,7 @@ class _SavedOpportunityState extends State<SavedOpportunity> {
             return savedOpportunities.containsKey(documentId) &&
                 savedOpportunities[documentId]!;
           });
-
+//
           return Padding(
             padding: EdgeInsets.only(top: height * .03,left: width * .03,right: width * .03,),
             child: ListView(
