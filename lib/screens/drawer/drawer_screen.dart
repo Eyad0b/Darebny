@@ -57,7 +57,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
                       height: 15,
                     ),
                     Text(
-                      FirebaseAuth.instance.currentUser!.displayName.toString(),
+                      FirebaseAuth.instance.currentUser!.displayName.toString() ?? "null",
                       style: TextStyle(
                         color: ConsValues.THEME_5,
                         fontSize: 22,

@@ -12,6 +12,7 @@ import '../drawer/drawer_screen.dart';
 import '../home/components/home.dart';
 import '../search_page.dart';
 
+// globalKey
 final GlobalKey<CurvedNavigationBarNewCopyForDaribnyState> _bottomNavigationKey =
 GlobalKey<CurvedNavigationBarNewCopyForDaribnyState>();
 
