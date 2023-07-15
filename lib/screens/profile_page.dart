@@ -43,7 +43,7 @@ class _ProfilePageState extends State<ProfilePage> {
             await _firestore.collection('Users').doc(user.uid).get();
 
         setState(() {
-          _fullNameHint = documentSnapshot.get('name') ?? "";
+          _fullNameHint = documentSnapshot.get('Name') ?? "";
           _emailHint = documentSnapshot.get('Email') ?? "";
           _passwordHint = documentSnapshot.get('Password') ?? "";
         });
@@ -64,9 +64,9 @@ class _ProfilePageState extends State<ProfilePage> {
             (documentSnapshot.data() as Map<String, dynamic>) ?? {};
 
         Map<String, dynamic> newData = {
-          'name': _fullNameController.text.isNotEmpty
+          'Name': _fullNameController.text.isNotEmpty
               ? _fullNameController.text
-              : existingData['name'],
+              : existingData['Name'],
           'Email': _emailController.text.isNotEmpty
               ? _emailController.text
               : existingData['Email'],
@@ -82,7 +82,9 @@ class _ProfilePageState extends State<ProfilePage> {
         FirebaseAuth.instance.currentUser!.updatePassword(_passwordController.text.isNotEmpty
             ? _passwordController.text : _passwordHint);
 
-
+        print(FirebaseAuth.instance.currentUser!.displayName);
+        print(FirebaseAuth.instance.currentUser!.email);
+        // print(FirebaseAuth.instance.currentUser!.);
         await _firestore.collection('Users').doc(user.uid).update(newData);
         print('Data saved successfully!');
       }
