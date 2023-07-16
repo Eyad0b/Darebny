@@ -6,5 +6,10 @@ class ConsValues {
   static Color THEME_4 = Color.fromRGBO(205, 67, 58, 1);
   static Color THEME_5 = Color.fromRGBO(73, 73, 73, 1);
   static Color WHITE = Colors.white;
+  static String USER_ID = "Id";
+  static String USER_NAME = "Name";
+  static String USER_EMAIL = "Email";
+  static String USER_TYPE = "UserType";
+  static String USER_TOKEN = "UserToken";
 
 }

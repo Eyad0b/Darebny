@@ -56,9 +56,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
               return Container(
                 padding: EdgeInsets.all(height * .015),
                 margin: EdgeInsets.only(
-                    left: height * .01,
-                    right: height * .01,
-                    top: height * .02),
+                    left: height * .01, right: height * .01, top: height * .02),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(20),
                   color: Colors.white,
@@ -101,20 +99,22 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                             width: width * .15,
                             height: height * .075,
                             decoration: ShapeDecoration(
-                                color: ConsValues.WHITE,
-                                shape: const CircleBorder(
-                                    side: BorderSide(color: Colors.white)),
-                                shadows: const <BoxShadow>[
-                                  BoxShadow(
-                                    color: Colors.white,
-                                    blurStyle: BlurStyle.outer,
-                                    blurRadius: Checkbox.width,
-                                  ),
-                                ],
-                                image: const DecorationImage(
-                                    image: AssetImage(
-                                        "assets/images/logo_wite.png"),
-                                    fit: BoxFit.scaleDown)),
+                              color: ConsValues.WHITE,
+                              shape: const CircleBorder(
+                                  side: BorderSide(color: Colors.white)),
+                              shadows: const <BoxShadow>[
+                                BoxShadow(
+                                  color: Colors.white,
+                                  blurStyle: BlurStyle.outer,
+                                  blurRadius: Checkbox.width,
+                                ),
+                              ],
+                              image: const DecorationImage(
+                                image:
+                                    AssetImage("assets/images/logo_wite.png"),
+                                fit: BoxFit.scaleDown,
+                              ),
+                            ),
                           ),
                           SizedBox(
                             width: width * .05,
@@ -123,14 +123,12 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                             children: [
                               Text(
                                 "New Opportunity uploaded",
-                                style:
-                                    TextStyle(fontWeight: FontWeight.bold),
+                                style: TextStyle(fontWeight: FontWeight.bold),
                               ),
                               Text(
                                 "New Opportunity uploaded",
                                 style: TextStyle(
-                                    fontWeight: FontWeight.w400,
-                                    fontSize: 13),
+                                    fontWeight: FontWeight.w400, fontSize: 13),
                               ),
                             ],
                           ),

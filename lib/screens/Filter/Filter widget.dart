@@ -5,8 +5,8 @@ class title extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(25.0),
+    return const Padding(
+      padding: EdgeInsets.all(25.0),
       child: Text(
         'Filter',
         style: TextStyle(fontSize: 30),
@@ -41,9 +41,10 @@ class _IconsFieldsState extends State<IconsFields> {
     'assets/images/Business.jpg',
     'assets/images/art.jpg'
   ];
+
   @override
   Widget build(BuildContext context) {
-    return Container(
+    return SizedBox(
       height: 110,
       width: double.infinity,
       child: ListView.builder(
@@ -57,14 +58,17 @@ class _IconsFieldsState extends State<IconsFields> {
               child: Column(
                 children: [
                   CircleAvatar(
-                      backgroundColor: Colors.white,
-                      radius: 30,
-                      backgroundImage: AssetImage(majorimage[index])),
+                    backgroundColor: Colors.white,
+                    radius: 30,
+                    backgroundImage: AssetImage(
+                      majorimage[index],
+                    ),
+                  ),
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Text(
                       major[index],
-                      style: TextStyle(fontSize: 18),
+                      style: const TextStyle(fontSize: 18),
                     ),
                   )
                 ],
@@ -233,6 +237,7 @@ class locationOptions extends StatefulWidget {
 
 class _locationOptionsState extends State<locationOptions> {
   String dropdownvalue = 'Amman';
+
   // List of items in our dropdown menu
   var items = [
     'Amman',
@@ -242,6 +247,7 @@ class _locationOptionsState extends State<locationOptions> {
     'Aqaba',
     'Zarqa',
   ];
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -293,41 +299,55 @@ class ApplyBotton extends StatefulWidget {
 class _ApplyBottonState extends State<ApplyBotton> {
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 170.0, bottom: 15),
+    return SizedBox(
+      height: MediaQuery.of(context).size.height * .2,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
-          Container(
-              height: 45,
-              width: MediaQuery.of(context).size.width * 0.4,
-              child: ElevatedButton(
-                  style: ButtonStyle(
-                      shape: MaterialStateProperty.all(RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15))),
-                      backgroundColor: MaterialStateProperty.all(
-                          Color.fromRGBO(250, 248, 248, 1))),
-                  onPressed: () {},
-                  child: Text(
-                    "RESET",
-                    style: TextStyle(
-                        color: Color.fromRGBO(205, 67, 58, 1), fontSize: 18),
-                  ))),
-          Container(
-              height: 45,
-              width: MediaQuery.of(context).size.width * 0.4,
-              child: ElevatedButton(
-                  style: ButtonStyle(
-                      shape: MaterialStateProperty.all(RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15))),
-                      backgroundColor: MaterialStateProperty.all(
-                          Color.fromRGBO(205, 67, 58, 1))),
-                  onPressed: () {},
-                  child: Text(
-                    "APPLY",
-                    style: TextStyle(
-                        color: Color.fromRGBO(241, 235, 235, 1), fontSize: 18),
-                  ))),
+          SizedBox(
+            height: 45,
+            width: MediaQuery.of(context).size.width * 0.4,
+            child: ElevatedButton(
+              style: ButtonStyle(
+                shape: MaterialStateProperty.all(
+                  RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                ),
+                backgroundColor: MaterialStateProperty.all(
+                  const Color.fromRGBO(250, 248, 248, 1),
+                ),
+              ),
+              onPressed: () {},
+              child: const Text(
+                "RESET",
+                style: TextStyle(
+                    color: Color.fromRGBO(205, 67, 58, 1), fontSize: 18),
+              ),
+            ),
+          ),
+          SizedBox(
+            height: 45,
+            width: MediaQuery.of(context).size.width * 0.4,
+            child: ElevatedButton(
+              style: ButtonStyle(
+                shape: MaterialStateProperty.all(
+                  RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15),
+                  ),
+                ),
+                backgroundColor: MaterialStateProperty.all(
+                  Color.fromRGBO(205, 67, 58, 1),
+                ),
+              ),
+              onPressed: () {},
+              child: Text(
+                "APPLY",
+                style: TextStyle(
+                    color: Color.fromRGBO(241, 235, 235, 1), fontSize: 18),
+              ),
+            ),
+          ),
         ],
       ),
     );

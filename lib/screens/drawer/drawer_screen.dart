@@ -1,12 +1,13 @@
+import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import '../../const_values.dart';
+import '../../general.dart';
 
 class DrawerScreen extends StatefulWidget {
   final Function(int) onPageChanged;
 
   const DrawerScreen({required this.onPageChanged, Key? key}) : super(key: key);
-
 
   @override
   State<DrawerScreen> createState() => _DrawerScreenState();
@@ -45,7 +46,8 @@ class _DrawerScreenState extends State<DrawerScreen> {
                       child: CircleAvatar(
                         radius: Checkbox.width * 2.5,
                         child: ClipRRect(
-                          borderRadius: BorderRadius.circular(Checkbox.width * 2.5),
+                          borderRadius:
+                              BorderRadius.circular(Checkbox.width * 2.5),
                           child: Image.network(
                             "https://firebasestorage.googleapis.com/v0/b/darebny-42086.appspot.com/o/assets%2Fimages%2Fcategories%2Ftechnology.png?alt=media&token=1299b6ca-4968-4b7b-90cc-a2a0c97dd3c5",
                             fit: BoxFit.contain,
@@ -57,7 +59,9 @@ class _DrawerScreenState extends State<DrawerScreen> {
                       height: 15,
                     ),
                     Text(
-                      FirebaseAuth.instance.currentUser!.displayName.toString() ?? "null",
+                      FirebaseAuth.instance.currentUser!.displayName
+                              .toString() ??
+                          "null",
                       style: TextStyle(
                         color: ConsValues.THEME_5,
                         fontSize: 22,
@@ -116,9 +120,55 @@ class _DrawerScreenState extends State<DrawerScreen> {
                     const SizedBox(
                       height: 20,
                     ),
-                    const NewRow(
-                      text: 'Sign Out',
-                      icon: Icons.cancel_outlined,
+                    InkWell(
+                      onTap: () async {
+                        await General.remove(ConsValues.USER_NAME);
+                        await General.remove(ConsValues.USER_ID);
+                        await General.remove(ConsValues.USER_EMAIL);
+                        await General.remove(ConsValues.USER_TYPE);
+                        await FirebaseAuth.instance.signOut();
+                        Navigator.of(context).pop();
+                        // AlertDialog(
+                        //   content: const Text("Are you sure?"),
+                        //   actions: [
+                        //     TextButton(
+                        //       child: const Text('No'),
+                        //       onPressed: () {
+                        //         Navigator.pop(context);
+                        //       },
+                        //     ),
+                        //     TextButton(
+                        //       child: const Text('Yes'),
+                        //       onPressed: () async {
+                        //         await FirebaseAuth.instance.signOut();
+                        //         Navigator.of(context).pop();
+                        //         Navigator.pop(context);
+                        //       },
+                        //     )
+                        //   ],
+                        // );
+                        //   AwesomeDialog(
+                        //     context: context,
+                        //     dialogType: DialogType.warning,
+                        //     animType: AnimType.topSlide,
+                        //     title: 'Are you sure ?',
+                        //     desc: 'Do you want to log out of the application?',
+                        //     btnCancelText: "No",
+                        //     btnCancelOnPress: () {
+                        //       Navigator.of(context).pop();
+                        //     },
+                        //     btnOkText: "Yes",
+                        //     btnOkOnPress: () async {
+                        //       await FirebaseAuth.instance.signOut();
+                        //       Navigator.of(context).pop();
+                        //       Navigator.of(context).pop();
+                        //     },
+                        //   );
+                      },
+                      child: const NewRow(
+                        text: 'Sign Out',
+                        icon: Icons.cancel_outlined,
+                      ),
                     ),
                     const SizedBox(
                       height: 20,
@@ -133,6 +183,7 @@ class _DrawerScreenState extends State<DrawerScreen> {
     );
   }
 }
+
 class NewRow extends StatelessWidget {
   final IconData icon;
   final String text;
@@ -159,7 +210,6 @@ class NewRow extends StatelessWidget {
           style: TextStyle(
             color: ConsValues.THEME_5,
             fontSize: 15,
-
           ),
         )
       ],

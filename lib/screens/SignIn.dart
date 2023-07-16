@@ -4,6 +4,7 @@ import 'package:darebny/screens/SignUp.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import '../general.dart';
 import 'home/home_screen.dart';
 
 class SignIn extends StatefulWidget {
@@ -275,8 +276,14 @@ class _SignInState extends State<SignIn> {
       //     .snapshots();
       //
       // user. == "1" ?
+
+      General.savePrefString(ConsValues.USER_ID, FirebaseAuth.instance.currentUser!.uid.toString());
+      General.savePrefString(ConsValues.USER_NAME, FirebaseAuth.instance.currentUser!.displayName.toString());
+      General.savePrefString(ConsValues.USER_EMAIL, FirebaseAuth.instance.currentUser!.email.toString());
+      General.savePrefString(ConsValues.USER_TYPE, "1");
+
       if (FirebaseAuth.instance.currentUser != null) {
-        Navigator.push(
+        Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (context) => HomeScreen(page: 0,)),
         );

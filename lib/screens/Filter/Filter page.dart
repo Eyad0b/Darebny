@@ -1,3 +1,4 @@
+import 'package:darebny/const_values.dart';
 import 'package:darebny/screens/Filter/Filter%20widget.dart';
 import 'package:flutter/material.dart';
 
@@ -11,43 +12,58 @@ class FilterPag extends StatefulWidget {
 class _FilterPagState extends State<FilterPag> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        body: Stack(
-      children: [
-        Container(
-          color: Colors.black,
-          height: MediaQuery.of(context).size.height,
-          width: MediaQuery.of(context).size.width,
+    return Container(
+      height: MediaQuery.of(context).size.height * .7,
+      width: MediaQuery.of(context).size.width,
+      decoration: const ShapeDecoration(
+        color: Color.fromRGBO(218, 218, 218, 1),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.only(
+            topLeft: Radius.circular(40),
+            // topRight: Radius.circular(40),
+          ),
         ),
-        Padding(
-          padding: const EdgeInsets.only(top: 50.0),
-          child: Container(
-            height: MediaQuery.of(context).size.height,
-            width: MediaQuery.of(context).size.width,
-            decoration: BoxDecoration(
+        shadows: <BoxShadow>[
+          BoxShadow(
+            color: Colors.white,
+            blurStyle: BlurStyle.outer,
+            blurRadius: Checkbox.width,
+          ),
+        ],
+      ),
+      child: Stack(
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(top: 50.0),
+            child: Container(
+              height: MediaQuery.of(context).size.height * .65,
+              width: MediaQuery.of(context).size.width,
+              decoration: const BoxDecoration(
                 color: Color.fromRGBO(228, 225, 225, 0.973),
                 borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(40),
-                    topRight: Radius.circular(40))),
-            child: SingleChildScrollView(
+                  topLeft: Radius.circular(40),
+                  topRight: Radius.circular(40),
+                ),
+              ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  title(),
-                  IconsFields(),
-                  place(),
-                  placeOption(),
-                  trainingstate(),
-                  trainingOption(),
-                  Location(),
+                  const title(),
+                  const IconsFields(),
+                  // place(),
+                  // placeOption(),
+                  // trainingstate(),
+                  // trainingOption(),
+                  const Location(),
                   locationOptions(),
-                  ApplyBotton()
+                  const ApplyBotton(),
+
                 ],
               ),
             ),
           ),
-        ),
-      ],
-    ));
+        ],
+      ),
+    );
   }
 }

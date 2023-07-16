@@ -8,6 +8,7 @@ import 'package:darebny/screens/profile_page.dart';
 import 'package:flutter/material.dart';
 import 'package:badges/badges.dart' as badges;
 import '../../Components/curved_button_bar.dart';
+import '../admin/admin_screen.dart';
 import '../drawer/drawer_screen.dart';
 import '../home/components/home.dart';
 import '../search_page.dart';
@@ -39,7 +40,8 @@ late double height;
 int _page = 0;
 List<Widget> _pages = [
   const Body(),
-  const AllOpportunities(),
+  // const AllOpportunities(),
+  const AdminScreen(),
   const SavedOpportunity(),
   const ProfilePage(),
   // const Body(),
@@ -176,7 +178,7 @@ class _HomeScreenState extends State<HomeScreen> {
             onTap: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const SearchPage()),
+                MaterialPageRoute(builder: (context) => const SearchTest()),
               );
             },
             child: Icon(
@@ -224,11 +226,6 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildBottomNavigationBar() {
-    Color icon0Color = _page == 0 ? ConsValues.WHITE : ConsValues.THEME_5;
-    Color icon1Color = _page == 1 ? ConsValues.WHITE : ConsValues.THEME_5;
-    Color icon2Color = _page == 2 ? ConsValues.WHITE : ConsValues.THEME_5;
-    Color icon3Color = _page == 3 ? ConsValues.WHITE : ConsValues.THEME_5;
-
     return CurvedNavigationBarNewCopyForDaribny(
       backgroundColor: Colors.grey.withOpacity(.15),
       height: height * .08,
@@ -334,7 +331,5 @@ class _HomeScreenState extends State<HomeScreen> {
       },
     );
   }
-
-
 
 }
